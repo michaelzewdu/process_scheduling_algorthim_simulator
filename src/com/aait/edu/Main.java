@@ -251,12 +251,12 @@ class SJR {
         System.out.println("Enter processes IDs");
 
         //processIDs = new int[numberOfProcess];
-        processIDs= new ArrayList<>(numberOfProcess);
+        processIDs = new ArrayList<>(numberOfProcess);
 
 
         for (int i = 0; i < numberOfProcess; i++) {
 
-            processIDs.add( Integer.parseInt(in.readLine()));
+            processIDs.add(Integer.parseInt(in.readLine()));
 
         }
 
@@ -269,7 +269,7 @@ class SJR {
         System.out.println("Enter burst time for each process");
 
         for (int i = 0; i < numberOfProcess; i++) {
-            burst_time.add( Integer.parseInt(in.readLine()));
+            burst_time.add(Integer.parseInt(in.readLine()));
 
         }
 
@@ -280,12 +280,12 @@ class SJR {
 
         System.out.println("Enter arrival time for each process");
         for (int i = 0; i < numberOfProcess; i++) {
-            arrival_time.add( Integer.parseInt(in.readLine()));
+            arrival_time.add(Integer.parseInt(in.readLine()));
         }
 
         //Sort processes based on arrival time
         Utilities utilities = new Utilities();
-        List<ArrayList<Integer>> processTimes = utilities.sortProcessesOnArrivalTime(arrival_time, processIDs,  burst_time);
+        List<ArrayList<Integer>> processTimes = utilities.sortProcessesOnArrivalTime(arrival_time, processIDs, burst_time);
         arrival_time = processTimes.get(0);
         processIDs = processTimes.get(1);
         burst_time = processTimes.get(2);
@@ -339,7 +339,7 @@ class SJR {
         int[] turnAroundTime = new int[processIDs.size()];
 
         completionTime[0] = burst_time.get(0);
-        turnAroundTime[0] = completionTime[0]-arrival_time.get(0);
+        turnAroundTime[0] = completionTime[0] - arrival_time.get(0);
         ArrayList<Integer> waitingProcessIDs = new ArrayList<>();
         ArrayList<Integer> waitingProcessBursts = new ArrayList<>();
         ArrayList<Integer> waitingProcessArrivalTimes = new ArrayList<>();
@@ -347,11 +347,11 @@ class SJR {
 
         System.out.println(" Waiting time for each process is:");
 
-        System.out.println("Process ID" + "       " + "Waiting time"+ "         "+"Completion time"+"       "+"Turnaround time");
+        System.out.println("Process ID" + "       " + "Waiting time" + "         " + "Completion time" + "       " + "Turnaround time");
 
-        System.out.println("-----------" + "      " + "-------------"+"         "+"----------------"+"      "+"----------------");
+        System.out.println("-----------" + "      " + "-------------" + "         " + "----------------" + "      " + "----------------");
 
-        System.out.println(" " + "Process " + processIDs.get(0) + "               " + wt[0]+"              "+completionTime[0]+"                 "+turnAroundTime[0]);
+        System.out.println(" " + "Process " + processIDs.get(0) + "               " + wt[0] + "              " + completionTime[0] + "                 " + turnAroundTime[0]);
 
         // calculate waiting time for all other processes
         int i = 1;
@@ -380,33 +380,32 @@ class SJR {
 //                    System.out.println(sortedByBurst.get(0).get(k));
 //
 //                }
-
-                if(i<processIDs.size()-1 && processIDs.get(i) != sortedByBurst.get(0).get(0)){
+                //Swap if current process is different from the current sorted process
+                if (i < processIDs.size() - 1 && processIDs.get(i) != sortedByBurst.get(0).get(0)) {
                     int tempForId;
                     int tempForBurst;
                     int tempForArrival;
                     int indexOfId;
-                    tempForId=processIDs.get(i);
-                    tempForBurst=burst_time.get(i);
-                    tempForArrival=arrival_time.get(i);
-                    indexOfId= processIDs.indexOf(sortedByBurst.get(0).get(0));
-                    processIDs.set(i,sortedByBurst.get(0).get(0));
-                    burst_time.set(i,sortedByBurst.get(1).get(0));
-                    arrival_time.set(i,sortedByBurst.get(2).get(0));
+                    tempForId = processIDs.get(i);
+                    tempForBurst = burst_time.get(i);
+                    tempForArrival = arrival_time.get(i);
+                    indexOfId = processIDs.indexOf(sortedByBurst.get(0).get(0));
+                    processIDs.set(i, sortedByBurst.get(0).get(0));
+                    burst_time.set(i, sortedByBurst.get(1).get(0));
+                    arrival_time.set(i, sortedByBurst.get(2).get(0));
 
-                    processIDs.set(indexOfId,tempForId);
-                    burst_time.set(indexOfId,tempForBurst);
-                    arrival_time.set(indexOfId,tempForArrival);
+                    processIDs.set(indexOfId, tempForId);
+                    burst_time.set(indexOfId, tempForBurst);
+                    arrival_time.set(indexOfId, tempForArrival);
 
                 }
 
 
-
                 completionTime[i] = completionTime[i - 1] + sortedByBurst.get(1).get(0);
                 wt[i] = completionTime[i - 1] - sortedByBurst.get(2).get(0);
-                turnAroundTime[i] = completionTime[i]- sortedByBurst.get(2).get(0);
-                System.out.println(" " + "Process " + sortedByBurst.get(0).get(0) + "           " + wt[i]+"                      "+completionTime[i]+"                  "+turnAroundTime[i]);
-               // if(processIDs.get(i) != sortedByBurst.get(0).get(0)){
+                turnAroundTime[i] = completionTime[i] - sortedByBurst.get(2).get(0);
+                System.out.println(" " + "Process " + sortedByBurst.get(0).get(0) + "           " + wt[i] + "                      " + completionTime[i] + "                  " + turnAroundTime[i]);
+                // if(processIDs.get(i) != sortedByBurst.get(0).get(0)){
                 //int currentIndex=processIDs.indexOf(sortedByBurst.get(0).get(0));
                 /*
                 for (int k = 0; k < processIDs.size(); k++) {
@@ -415,7 +414,7 @@ class SJR {
                 }
 
                  */
-               // }
+                // }
 
                 i++;
 
@@ -427,7 +426,7 @@ class SJR {
             } else {
                 completionTime[i] = completionTime[i - 1] + burst_time.get(i);
                 wt[i] = completionTime[i] - arrival_time.get(i);
-                turnAroundTime[i]=completionTime[i]-arrival_time.get(i);
+                turnAroundTime[i] = completionTime[i] - arrival_time.get(i);
                 System.out.println(" " + "Process " + processIDs.get(i) + "      " + "      " + wt[i]);
 
                 i++;
@@ -436,7 +435,7 @@ class SJR {
 
         }
         int totalwt = 0;
-        int totalTurnAroundTime =0;
+        int totalTurnAroundTime = 0;
         for (int k = 0; k < processIDs.size(); k++) {
             totalwt += wt[k];
             totalTurnAroundTime += turnAroundTime[k];
@@ -444,8 +443,6 @@ class SJR {
         }
         System.out.println("The average waiting time is:" + totalwt / processIDs.size());
         System.out.println("The average turnaround time is:" + totalTurnAroundTime / processIDs.size());
-
-
 
 
         return 0;
@@ -470,9 +467,9 @@ class Utilities {
 
             // Compare the current element with the next one
             while (j > -1 && processArrivalTimes.get(j) > nxt_element) {
-                processArrivalTimes.set(j + 1 , processArrivalTimes.get(j));
+                processArrivalTimes.set(j + 1, processArrivalTimes.get(j));
                 processIDs.set(j + 1, processIDs.get(j));
-                processBursts.set(j + 1 , processBursts.get(j));
+                processBursts.set(j + 1, processBursts.get(j));
                 j = j - 1;
 
             }
@@ -527,22 +524,23 @@ class Utilities {
     }
 }
 
-class PremptiveSJF{
-    void initializePremptiveInputs(){
+class PremptiveSJF {
+    void initializePremptiveInputs() {
 
     }
 }
 
-class PriorityScheduling{
-    void initializePrioritySchedulingInputs(){
+class PriorityScheduling {
+    void initializePrioritySchedulingInputs() {
 
     }
 }
-class RR{
+
+class RR {
     ArrayList<Integer> processIDs;
     ArrayList<Integer> burst_time;
 
-    void initializeRRinputs() throws IOException{
+    void initializeRRinputs() throws IOException {
 
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
@@ -556,12 +554,12 @@ class RR{
         System.out.println("Enter processes IDs");
 
         //processIDs = new int[numberOfProcess];
-        processIDs= new ArrayList<>(numberOfProcess);
+        processIDs = new ArrayList<>(numberOfProcess);
 
 
         for (int i = 0; i < numberOfProcess; i++) {
 
-            processIDs.add( Integer.parseInt(in.readLine()));
+            processIDs.add(Integer.parseInt(in.readLine()));
 
         }
 
@@ -574,9 +572,142 @@ class RR{
         System.out.println("Enter burst time for each process");
 
         for (int i = 0; i < numberOfProcess; i++) {
-            burst_time.add( Integer.parseInt(in.readLine()));
+            burst_time.add(Integer.parseInt(in.readLine()));
+
+        }
+        System.out.println("Enter Time Quantum");
+
+        int timeQuantum = Integer.parseInt(in.readLine());
+
+        int userChoice;
+
+        do {
+
+            System.out.println("Choose 1 to see waiting time and  turnaround time: 2 to exit");
+
+
+            userChoice = Integer.parseInt(in.readLine());
+
+            switch (userChoice) {
+
+                case 1:
+
+                    double average_wt = waitingTimeTurnaroundTimeRR(processIDs, burst_time, timeQuantum);
+
+
+                    break;
+
+                case 2:
+
+                    System.out.println("Good bye!");
+
+                    System.exit(-1);
+
+                    break;
+
+                default:
+
+                    System.out.println(" U have chosen wrong choice");
+
+                    break;
+
+            }
+        } while (userChoice != 2);
+
+
+    }
+
+    private double waitingTimeTurnaroundTimeRR(ArrayList<Integer> processIDs, ArrayList<Integer> burst_time, int timeQuantum) {
+        int[] wt = new int[processIDs.size()];
+        int[] turnAroundTimes = new int[processIDs.size()];
+        int completionTimeOfAll = 0;
+        List<Integer> time = new ArrayList<Integer>();
+        List<Integer> completedProcesses = new ArrayList<>();
+
+        for (int i = 0; i < wt.length; i++) {
+            wt[i] = 0;
+
+        }
+        System.out.println("Process ID          Time When done");
+        System.out.println("----------          ----");
+
+
+        if (burst_time.get(0) - timeQuantum > 0) {
+            // burst_time.add(burst_time.get(0) - timeQuantum);
+            // processIDs.add(processIDs.get(0));
+            time.add(0, timeQuantum);
+            wt[0] = 0;
+            System.out.println(processIDs.get(0) + "                    " + time.get(0));
+
+        } else if (burst_time.get(0) - timeQuantum <= 0) {
+            time.add(0, burst_time.get(0));
+            wt[0] = 0;
+            System.out.println(processIDs.get(0) + "                    " + time.get(0));
 
         }
 
+
+        for (int i = 0; i < processIDs.size(); i++) {
+            completionTimeOfAll += burst_time.get(i);
+
+            if (burst_time.get(i) - timeQuantum > 0) {
+                burst_time.add(burst_time.get(i) - timeQuantum);
+                processIDs.add(processIDs.get(i));
+                //System.out.println(processIDs.size());
+                if (i != 0) {
+                    time.add(i, time.get(i - 1) + timeQuantum);
+
+                    //wt[processIDs.get(i)-1]+=wt[processIDs.get(i-1)-1] ;
+                    for (int j = 0; j < processIDs.size(); j++) {
+                        if (!completedProcesses.contains(processIDs.get(j)) && j!=i) {
+                            wt[processIDs.get(j)-1] += timeQuantum;
+
+                        }
+                    }
+                    System.out.println(processIDs.get(i) + "                    " + time.get(i));
+
+
+                }
+
+
+                //System.out.println(processIDs.get(i-1));
+
+            } else if (burst_time.get(i) - timeQuantum <= 0) {
+
+                if (i != 0) {
+                    time.add(i, time.get(i - 1) + burst_time.get(i));
+
+                    //wt[processIDs.get(i) - 1] += wt[processIDs.get(i - 1) - 1];
+                    turnAroundTimes[processIDs.get(i) - 1] = time.get(i);
+                    completedProcesses.add(processIDs.get(i));
+                    for (int j = 0; j < processIDs.size(); j++) {
+                        if (!completedProcesses.contains(processIDs.get(j)) && j!=i) {
+
+                            wt[processIDs.get(j)-1] += burst_time.get(j);
+                        }
+                    }
+                    System.out.println(processIDs.get(i) + "                    " + time.get(i));
+
+                }
+                //System.out.println(processIDs.size());
+                //System.out.println(processIDs.get(i-1));
+
+            }
+        }
+//        System.out.println("Waiting Times");
+//        for (int i = 0; i < wt.length; i++) {
+//            System.out.println(wt[i]);
+//
+//        }
+        System.out.println("====================");
+        System.out.println("TurnAround Times");
+        int totalTurnaround = 0;
+        for (int i = 0; i < turnAroundTimes.length; i++) {
+            System.out.println(turnAroundTimes[i]);
+            totalTurnaround += turnAroundTimes[i];
+        }
+        System.out.println("====================");
+        System.out.println("Average TurnAround Time = " + totalTurnaround / turnAroundTimes.length);
+        return 0;
     }
 }
