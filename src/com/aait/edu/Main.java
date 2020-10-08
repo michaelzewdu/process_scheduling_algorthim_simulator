@@ -10,7 +10,8 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         System.out.println("Welcome to our scheduling algorithms simulator");
-        System.out.println("Choose to see: (1) FCFSA (2) to see SJR(shortest-job-first) (3) preemptive SJF (4) Priority Scheduling(Preemptive) (5) Round Robin ");
+        System.out.println("Instructions: Input Integers only, don't input empty string");
+        System.out.println("Choose to see: (1) FCFSA (2) to see SJR(shortest-job-first) (3) Preemptive SJF (4) Priority Scheduling(Preemptive) (5)Priority Scheduling(Non-Preemptive) (6) Round Robin ");
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         int menuItemChosen = Integer.parseInt(in.readLine());
         do {
@@ -28,6 +29,9 @@ public class Main {
                     PriorityScheduling priorityScheduling = new PriorityScheduling();
                     priorityScheduling.initializePrioritySchedulingInputs();
                 case 5:
+                    NonPreemptivePriorityScheduling nonPreemptivePriorityScheduling = new NonPreemptivePriorityScheduling();
+                    nonPreemptivePriorityScheduling.initializeSjrInputs();
+                case 6:
                     RR rr = new RR();
                     rr.initializeRRinputs();
                 default:
@@ -190,7 +194,7 @@ class FCFSA {
 
         do {
 
-            System.out.println("Choose 1 to see waiting time: 2 to see turnaround time: 3 to exit");
+            System.out.println("Choose 1 to see waiting time: 2 to see turnaround time: 3 to exit: 4 for more options");
 
 
             a = Integer.parseInt(in.readLine());
@@ -222,9 +226,13 @@ class FCFSA {
 
                     break;
 
+                case 4:
+                    Utilities utilities = new Utilities();
+                    utilities.showAfterCompleteMenu();
+
                 default:
 
-                    System.out.println(" U have chosen wrong choice");
+                    System.out.println(" You have chosen wrong choice");
 
                     break;
 
@@ -323,7 +331,7 @@ class SJR {
 
                 default:
 
-                    System.out.println(" U have chosen wrong choice");
+                    System.out.println(" You have chosen wrong choice");
 
                     break;
 
@@ -333,7 +341,7 @@ class SJR {
 
     }
 
-    private double waitingTimeTurnaroundTimeSJF(ArrayList<Integer> processIDs, ArrayList<Integer> arrival_time, ArrayList<Integer> burst_time) {
+    private double waitingTimeTurnaroundTimeSJF(ArrayList<Integer> processIDs, ArrayList<Integer> arrival_time, ArrayList<Integer> burst_time) throws IOException {
 
         // waiting time for first process is 0
         int[] wt = new int[processIDs.size()];
@@ -447,7 +455,42 @@ class SJR {
         System.out.println("The average waiting time is:" + totalwt / processIDs.size());
         System.out.println("The average turnaround time is:" + totalTurnAroundTime / processIDs.size());
 
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
+        int afterSimulationMenuChoice;
+        System.out.println("\n\n Enter (1) to proceed to FCFS simulator");
+        System.out.println("\t\t Enter (2) to proceed to SJF non preemptive simulator");
+        System.out.println("\n\n Enter (3) to proceed to preemptive SJF simulator");
+        System.out.println("\t\t Enter (4) to proceed to preemptive priority scheduler simulator");
+        System.out.println("\t\t Enter (5) to proceed to non preemptive priority scheduler simulator");
+        System.out.println("\t\t Enter (6) to proceed to round robin scheduler simulator");
+        System.out.println("\t\t Enter (7) to Exit");
+
+        afterSimulationMenuChoice = Integer.parseInt(in.readLine());
+
+        switch (afterSimulationMenuChoice) {
+            case 1:
+                FCFSA fcfsa = new FCFSA();
+                fcfsa.initializeFcfsaInputs();
+            case 2:
+                SJR sjr = new SJR();
+                sjr.initializeSjrInputs();
+            case 3:
+                PreemptiveSJF preemptiveSJF = new PreemptiveSJF();
+                preemptiveSJF.initializePremptiveInputs();
+            case 4:
+                PriorityScheduling priorityScheduling = new PriorityScheduling();
+                priorityScheduling.initializePrioritySchedulingInputs();
+            case 5:
+                NonPreemptivePriorityScheduling nonPreemptivePriorityScheduling = new NonPreemptivePriorityScheduling();
+                nonPreemptivePriorityScheduling.initializeSjrInputs();
+            case 6:
+                RR rr = new RR();
+                rr.initializeRRinputs();
+            case 7:
+                System.out.println("Good bye!");
+                System.exit(0);
+        }
         return 0;
     }
 
@@ -525,6 +568,89 @@ class Utilities {
         processTimes.add(waitingArrivalTimes);
         return processTimes;
     }
+
+    List<ArrayList<Integer>> sortProcessesOnPriority(ArrayList<Integer> priority, ArrayList<Integer> waitingBursts, ArrayList<Integer> waitingProcessIds, ArrayList<Integer> waitingArrivalTimes) {
+        int j;
+        int nxt_element;
+        int nxt_element_processID;
+        int nxt_element_arrivals;
+        int nxt_element_priority;
+        //System.out.println("waiting burst size is " + waitingBursts.size());
+        for (int i = 1; i < waitingBursts.size(); i++) {
+            j = i - 1;
+            nxt_element = waitingBursts.get(i);
+            nxt_element_processID = waitingProcessIds.get(i);
+            nxt_element_arrivals = waitingArrivalTimes.get(i);
+            nxt_element_priority = priority.get(i);
+
+            // Compare the current element with the next one
+            while (j > -1 && priority.get(j) > nxt_element) {
+                waitingBursts.set(j + 1, waitingBursts.get(j));
+                waitingProcessIds.set(j + 1, waitingProcessIds.get(j));
+                waitingArrivalTimes.set(j + 1, waitingArrivalTimes.get(j));
+                priority.set(j + 1, priority.get(j));
+                j = j - 1;
+
+            }
+            waitingBursts.set(j + 1, nxt_element);
+            waitingProcessIds.set(j + 1, nxt_element_processID);
+            waitingArrivalTimes.set(j + 1, nxt_element_arrivals);
+            priority.set(j + 1, nxt_element_priority);
+
+
+        }
+        List<ArrayList<Integer>> processTimes = new ArrayList<>(3);
+
+        processTimes.add(waitingProcessIds);
+        processTimes.add(waitingBursts);
+        processTimes.add(waitingArrivalTimes);
+        processTimes.add(priority);
+        return processTimes;
+    }
+
+    void showAfterCompleteMenu() throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+
+        int afterSimulationMenuChoice;
+        System.out.println("\n\n Enter (1) to proceed to FCFS simulator");
+        System.out.println("\t\t Enter (2) to proceed to SJF non preemptive simulator");
+        System.out.println("\n\n Enter (3) to proceed to preemptive SJF simulator");
+        System.out.println("\t\t Enter (4) to proceed to preemptive priority scheduler simulator");
+        System.out.println("\t\t Enter (5) to proceed to non preemptive priority scheduler simulator");
+        System.out.println("\t\t Enter (6) to proceed to round robin scheduler simulator");
+        System.out.println("\t\t Enter (7) to Exit");
+
+        afterSimulationMenuChoice = Integer.parseInt(in.readLine());
+
+        switch (afterSimulationMenuChoice) {
+            case 1:
+                FCFSA fcfsa = new FCFSA();
+                fcfsa.initializeFcfsaInputs();
+            case 2:
+                SJR sjr = new SJR();
+                sjr.initializeSjrInputs();
+            case 3:
+                PreemptiveSJF preemptiveSJF = new PreemptiveSJF();
+                preemptiveSJF.initializePremptiveInputs();
+            case 4:
+                PriorityScheduling priorityScheduling = new PriorityScheduling();
+                priorityScheduling.initializePrioritySchedulingInputs();
+            case 5:
+                NonPreemptivePriorityScheduling nonPreemptivePriorityScheduling = new NonPreemptivePriorityScheduling();
+                nonPreemptivePriorityScheduling.initializeSjrInputs();
+            case 6:
+                RR rr = new RR();
+                rr.initializeRRinputs();
+            case 7:
+                System.out.println("Good bye!");
+                System.exit(0);
+            default:
+                System.out.println("You have made a wrong choice");
+        }
+
+    }
+
+
 }
 
 class Process {
@@ -615,7 +741,7 @@ class PreemptiveSJF {
     }
 
     // Method to calculate average time
-    static void findAvgTime(Process proc[], int n) {
+    static void findAvgTime(Process proc[], int n) throws IOException {
         int wt[] = new int[n], tat[] = new int[n];
         int total_wt = 0, total_tat = 0;
 
@@ -641,6 +767,12 @@ class PreemptiveSJF {
 
         System.out.println("Average waiting time = " + (float) total_wt / (float) n);
         System.out.println("Average turn around time = " + (float) total_tat / (float) n);
+        System.out.println("=============END==============");
+
+        Utilities utilities = new Utilities();
+        utilities.showAfterCompleteMenu();
+
+
     }
 
     void initializePremptiveInputs() throws IOException {
@@ -734,6 +866,129 @@ class ProcessModelForPriority {
 }
 
 class PriorityScheduling {
+    // Method to calculate average time
+    static void findAvgTime(ProcessModelForPriority proc[], int n) throws IOException {
+        int wt[] = new int[n], tat[] = new int[n];
+        int total_wt = 0, total_tat = 0;
+
+        // Function to find waiting time of all
+        // processes
+        findWaitingTime(proc, n, wt);
+
+        // Function to find turn around time for
+        // all processes
+        findTurnAroundTime(proc, n, wt, tat);
+
+        // Display processes along with all
+        // details
+        System.out.println("Processes " + " Burst time " + " Waiting time " + " Turn around time");
+
+        // Calculate total waiting time and
+        // total turnaround time
+        for (int i = 0; i < n; i++) {
+            total_wt = total_wt + wt[i];
+            total_tat = total_tat + tat[i];
+            System.out.println(" " + proc[i].pid + "\t\t\t" + proc[i].bt + "\t\t\t " + wt[i] + "\t\t\t" + tat[i]);
+        }
+
+        System.out.println("Average waiting time = " + (float) total_wt / (float) n);
+        System.out.println("Average turn around time = " + (float) total_tat / (float) n);
+
+        System.out.println("\n ==================END====================");
+
+        Utilities utilities = new Utilities();
+        utilities.showAfterCompleteMenu();
+    }
+
+    // Method to find the waiting time for all
+    // processes
+    static void findWaitingTime(ProcessModelForPriority proc[], int n, int wt[]) {
+        int rt[] = new int[n];
+        List<ProcessModelForPriority> executionOrder = new ArrayList<>();
+        List timeList = new ArrayList<>();
+
+
+        // Copy the burst time into rt[]
+        for (int i = 0; i < n; i++)
+            rt[i] = proc[i].bt;
+
+        int complete = 0, t = 0, max = Integer.MAX_VALUE;
+        int highestPriority = 0, finish_time;
+        boolean check = false;
+
+        //System.out.println("made it to waiting time method");
+        // Process until all processes gets
+        // completed
+        while (complete != n) {
+
+            // Find process with maximum priority among the
+            // processes that arrives till the
+            // current time`
+            for (int j = 0; j < n; j++) {
+                if ((proc[j].art <= t) && (proc[j].priority <= max) && rt[j] > 0) {
+                    max = proc[j].priority;
+                    highestPriority = j;
+                    check = true;
+                }
+            }
+
+            if (check == false) {
+                t++;
+                continue;
+            }
+
+            // Reduce remaining time by one
+            rt[highestPriority]--;
+            executionOrder.add(proc[highestPriority]);
+            timeList.add(t);
+
+            /*
+            // Update the maximum priority
+            max = rt[highestPriority];
+            if (max == 0)
+                max = 0;
+
+             */
+            max = Integer.MAX_VALUE;
+
+            // If a process gets completely
+            // executed
+            if (rt[highestPriority] == 0) {
+
+                proc[highestPriority].priority = -1;
+                // Increment complete
+                complete++;
+                check = false;
+
+                // Find finish time of current process
+                finish_time = t + 1;
+
+                // Calculate waiting time
+                wt[highestPriority] = finish_time - proc[highestPriority].bt - proc[highestPriority].art;
+
+                if (wt[highestPriority] < 0)
+                    wt[highestPriority] = 0;
+            }
+            // Increment time
+
+            t++;
+
+        }
+        System.out.println("The execution order is as follows");
+        for (int i = 0; i < executionOrder.size(); i++) {
+            System.out.println("Process: " + executionOrder.get(i).pid + " @Time " + timeList.get(i));
+
+        }
+    }
+
+    // Method to calculate turn around time
+    static void findTurnAroundTime(ProcessModelForPriority proc[], int n, int wt[], int tat[]) {
+        // calculating turnaround time by adding
+        // bt[i] + wt[i]
+        for (int i = 0; i < n; i++)
+            tat[i] = proc[i].bt + wt[i];
+    }
+
     void initializePrioritySchedulingInputs() throws IOException {
 
         ArrayList<Integer> processIDs;
@@ -818,122 +1073,234 @@ class PriorityScheduling {
         } while (userChoice != 2);
     }
 
-    // Method to calculate average time
-    static void findAvgTime(ProcessModelForPriority proc[], int n) {
-        int wt[] = new int[n], tat[] = new int[n];
-        int total_wt = 0, total_tat = 0;
 
-        // Function to find waiting time of all
-        // processes
-        findWaitingTime(proc, n, wt);
+}
 
-        // Function to find turn around time for
-        // all processes
-        findTurnAroundTime(proc, n, wt, tat);
+class NonPreemptivePriorityScheduling {
 
-        // Display processes along with all
-        // details
-        System.out.println("Processes " + " Burst time " + " Waiting time " + " Turn around time");
+    ArrayList<Integer> processIDs;
+    ArrayList<Integer> burst_time;
+    ArrayList<Integer> arrival_time;
+    ArrayList<Integer> priority;
 
-        // Calculate total waiting time and
-        // total turnaround time
-        for (int i = 0; i < n; i++) {
-            total_wt = total_wt + wt[i];
-            total_tat = total_tat + tat[i];
-            System.out.println(" " + proc[i].pid + "\t\t\t" + proc[i].bt + "\t\t\t " + wt[i] + "\t\t\t" + tat[i]);
+    void initializeSjrInputs() throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+
+
+        System.out.println("Enter the number of processes");
+
+        int numberOfProcess = Integer.parseInt(in.readLine());
+
+        //Process ID's
+
+        System.out.println("Enter processes IDs");
+
+        //processIDs = new int[numberOfProcess];
+        processIDs = new ArrayList<>(numberOfProcess);
+
+
+        for (int i = 0; i < numberOfProcess; i++) {
+
+            processIDs.add(Integer.parseInt(in.readLine()));
+
         }
 
-        System.out.println("Average waiting time = " + (float) total_wt / (float) n);
-        System.out.println("Average turn around time = " + (float) total_tat / (float) n);
+
+        //Burst time of all processes
+
+        //burst_time = new int[numberOfProcess];
+        burst_time = new ArrayList<>(numberOfProcess);
+
+        System.out.println("Enter burst time for each process");
+
+        for (int i = 0; i < numberOfProcess; i++) {
+            burst_time.add(Integer.parseInt(in.readLine()));
+
+        }
+
+        //Arrival time of all processes
+
+        //arrival_time = new int[numberOfProcess];
+        arrival_time = new ArrayList<>(numberOfProcess);
+
+        System.out.println("Enter arrival time for each process");
+        for (int i = 0; i < numberOfProcess; i++) {
+            arrival_time.add(Integer.parseInt(in.readLine()));
+        }
+
+        System.out.println("Enter priority for each process");
+        for (int i = 0; i < numberOfProcess; i++) {
+            priority.add(Integer.parseInt(in.readLine()));
+        }
+
+        //Sort processes based on arrival time
+        Utilities utilities = new Utilities();
+        List<ArrayList<Integer>> processTimes = utilities.sortProcessesOnArrivalTime(arrival_time, processIDs, burst_time);
+        arrival_time = processTimes.get(0);
+        processIDs = processTimes.get(1);
+        burst_time = processTimes.get(2);
+//        for (int i = 0; i < processIDs.length; i++) {
+//            System.out.println(processIDs[i]);
+//        }
+        int userChoice;
+
+        do {
+
+            System.out.println("Choose 1 to see waiting time and  turnaround time: 2 to exit");
+
+
+            userChoice = Integer.parseInt(in.readLine());
+
+            switch (userChoice) {
+
+                case 1:
+
+                    double average_wt = waitingTimeTurnaroundTimeSJF(processIDs, arrival_time, burst_time, priority);
+
+
+                    break;
+
+                case 2:
+
+                    System.out.println("Good bye!");
+
+                    System.exit(-1);
+
+                    break;
+
+                default:
+
+                    System.out.println(" You have chosen wrong choice");
+
+                    break;
+
+            }
+        } while (userChoice != 3);
+
+
     }
 
-    // Method to find the waiting time for all
-    // processes
-    static void findWaitingTime(ProcessModelForPriority proc[], int n, int wt[]) {
-        int rt[] = new int[n];
-        List<ProcessModelForPriority> executionOrder = new ArrayList<>();
-        List timeList = new ArrayList<>();
+    private double waitingTimeTurnaroundTimeSJF(ArrayList<Integer> processIDs, ArrayList<Integer> arrival_time, ArrayList<Integer> burst_time, ArrayList<Integer> priority) throws IOException {
+
+        // waiting time for first process is 0
+        int[] wt = new int[processIDs.size()];
+        wt[0] = 0;
+        int[] completionTime = new int[processIDs.size()];
+        int[] turnAroundTime = new int[processIDs.size()];
+
+        completionTime[0] = burst_time.get(0);
+        turnAroundTime[0] = completionTime[0] - arrival_time.get(0);
+        ArrayList<Integer> waitingProcessIDs = new ArrayList<>();
+        ArrayList<Integer> waitingProcessBursts = new ArrayList<>();
+        ArrayList<Integer> waitingProcessArrivalTimes = new ArrayList<>();
+        ArrayList<Integer> waitingPriorities = new ArrayList<>();
 
 
-        // Copy the burst time into rt[]
-        for (int i = 0; i < n; i++)
-            rt[i] = proc[i].bt;
+        System.out.println(" Waiting time for each process is:");
 
-        int complete = 0, t = 0, max = 0;
-        int highestPriority = 0, finish_time;
-        boolean check = false;
+        System.out.println("Process ID" + "       " + "Waiting time" + "         " + "Completion time" + "       " + "Turnaround time");
 
-        //System.out.println("made it to waiting time method");
-        // Process until all processes gets
-        // completed
-        while (complete != n) {
+        System.out.println("-----------" + "      " + "-------------" + "         " + "----------------" + "      " + "----------------");
 
-            // Find process with maximum priority among the
-            // processes that arrives till the
-            // current time`
-            for (int j = 0; j < n; j++) {
-                if ((proc[j].art <= t) && (proc[j].priority >= max) && rt[j] > 0) {
-                    max = proc[j].priority;
-                    highestPriority = j;
-                    check = true;
+        System.out.println(" " + "Process " + processIDs.get(0) + "               " + wt[0] + "              " + completionTime[0] + "                 " + turnAroundTime[0]);
+
+        // calculate waiting time for all other processes
+        int i = 1;
+        int j = 1;
+        while (i < processIDs.size()) {
+
+            for (j = i; j < processIDs.size(); j++) {
+                if (completionTime[i - 1] > arrival_time.get(j)) {
+                    //System.out.println(processIDs.get(j));
+                    //System.out.println(processIDs[j]);
+                    waitingProcessIDs.add(processIDs.get(j));
+                    waitingProcessBursts.add(burst_time.get(j));
+                    waitingProcessArrivalTimes.add(arrival_time.get(j));
+                    waitingPriorities.add(priority.get(j));
                 }
             }
+//            for (int k = 0; k < waitingProcessIDs.size(); k++) {
+//                System.out.println(waitingProcessIDs.get(k));
+//            }
 
-            if (check == false) {
-                t++;
-                continue;
+            if (!waitingProcessIDs.isEmpty()) {
+                Utilities utilities = new Utilities();
+                List<ArrayList<Integer>> sortedByPriority = utilities.sortProcessesOnPriority(priority, waitingProcessBursts, waitingProcessIDs, waitingProcessArrivalTimes);
+
+
+//                for (int k = 0; k < sortedByBurst.get(0).size(); k++) {
+//                    System.out.println(sortedByBurst.get(0).get(k));
+//
+//                }
+                //Swap if current process is different from the current sorted process
+                if (i < processIDs.size() - 1 && processIDs.get(i) != sortedByPriority.get(0).get(0)) {
+                    int tempForId;
+                    int tempForBurst;
+                    int tempForArrival;
+                    int indexOfId;
+                    tempForId = processIDs.get(i);
+                    tempForBurst = burst_time.get(i);
+                    tempForArrival = arrival_time.get(i);
+                    indexOfId = processIDs.indexOf(sortedByPriority.get(0).get(0));
+                    processIDs.set(i, sortedByPriority.get(0).get(0));
+                    burst_time.set(i, sortedByPriority.get(1).get(0));
+                    arrival_time.set(i, sortedByPriority.get(2).get(0));
+
+                    processIDs.set(indexOfId, tempForId);
+                    burst_time.set(indexOfId, tempForBurst);
+                    arrival_time.set(indexOfId, tempForArrival);
+
+                }
+
+
+                completionTime[i] = completionTime[i - 1] + sortedByPriority.get(1).get(0);
+                wt[i] = completionTime[i - 1] - sortedByPriority.get(2).get(0);
+                turnAroundTime[i] = completionTime[i] - sortedByPriority.get(2).get(0);
+                System.out.println(" " + "Process " + sortedByPriority.get(0).get(0) + "           " + wt[i] + "                      " + completionTime[i] + "                  " + turnAroundTime[i]);
+                // if(processIDs.get(i) != sortedByBurst.get(0).get(0)){
+                //int currentIndex=processIDs.indexOf(sortedByBurst.get(0).get(0));
+                /*
+                for (int k = 0; k < processIDs.size(); k++) {
+                    System.out.println("Process"+processIDs.get(k)+" Arrival time"+ arrival_time.get(k));
+
+                }
+
+                 */
+                // }
+
+                i++;
+
+                waitingProcessIDs.clear();
+                waitingProcessBursts.clear();
+                waitingProcessArrivalTimes.clear();
+
+
+            } else {
+                completionTime[i] = completionTime[i - 1] + burst_time.get(i);
+                wt[i] = completionTime[i] - arrival_time.get(i);
+                turnAroundTime[i] = completionTime[i] - arrival_time.get(i);
+                System.out.println(" " + "Process " + processIDs.get(i) + "      " + "      " + wt[i]);
+
+                i++;
             }
 
-            // Reduce remaining time by one
-            rt[highestPriority]--;
-            executionOrder.add(proc[highestPriority]);
-            timeList.add(t);
-
-            /*
-            // Update the maximum priority
-            max = rt[highestPriority];
-            if (max == 0)
-                max = 0;
-
-             */
-            max = 0;
-
-            // If a process gets completely
-            // executed
-            if (rt[highestPriority] == 0) {
-
-                proc[highestPriority].priority = -1;
-                // Increment complete
-                complete++;
-                check = false;
-
-                // Find finish time of current process
-                finish_time = t + 1;
-
-                // Calculate waiting time
-                wt[highestPriority] = finish_time - proc[highestPriority].bt - proc[highestPriority].art;
-
-                if (wt[highestPriority] < 0)
-                    wt[highestPriority] = 0;
-            }
-            // Increment time
-
-            t++;
 
         }
-        System.out.println("The execution order is as follows");
-        for (int i = 0; i < executionOrder.size(); i++) {
-            System.out.println("Process: " + executionOrder.get(i).pid + " @Time " + timeList.get(i));
+        int totalwt = 0;
+        int totalTurnAroundTime = 0;
+        for (int k = 0; k < processIDs.size(); k++) {
+            totalwt += wt[k];
+            totalTurnAroundTime += turnAroundTime[k];
 
         }
-    }
+        System.out.println("The average waiting time is:" + totalwt / processIDs.size());
+        System.out.println("The average turnaround time is:" + totalTurnAroundTime / processIDs.size());
 
-    // Method to calculate turn around time
-    static void findTurnAroundTime(ProcessModelForPriority proc[], int n, int wt[], int tat[]) {
-        // calculating turnaround time by adding
-        // bt[i] + wt[i]
-        for (int i = 0; i < n; i++)
-            tat[i] = proc[i].bt + wt[i];
+        System.out.println("=====================END========================");
+        Utilities utilities = new Utilities();
+        utilities.showAfterCompleteMenu();
+
+        return 0;
     }
 
 
@@ -945,7 +1312,7 @@ class RR {
     int[] burst_time;
 
     // Method to calculate average time
-    static void findavgTime(int processes[], int n, int bt[], int timeQuantum) {
+    static void findavgTime(int processes[], int n, int bt[], int timeQuantum) throws IOException {
         int wt[] = new int[n], tat[] = new int[n];
         int total_wt = 0, total_tat = 0;
 
@@ -968,6 +1335,9 @@ class RR {
 
         System.out.println("Average waiting time = " + (float) total_wt / (float) n);
         System.out.println("Average turn around time = " + (float) total_tat / (float) n);
+
+        Utilities utilities = new Utilities();
+        utilities.showAfterCompleteMenu();
     }
 
     // Method to find the waiting time for all
