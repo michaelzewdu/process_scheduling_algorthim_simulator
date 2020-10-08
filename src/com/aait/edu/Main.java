@@ -245,7 +245,7 @@ class SJR {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
 
-        System.out.println(" Enter the number of processes");
+        System.out.println("Enter the number of processes");
 
         int numberOfProcess = Integer.parseInt(in.readLine());
 
@@ -751,7 +751,7 @@ class PriorityScheduling {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
 
-        System.out.println(" Enter the number of processes");
+        System.out.println("Enter the number of processes");
 
         int numberOfProcess = Integer.parseInt(in.readLine());
 
@@ -851,6 +851,9 @@ class PriorityScheduling {
     // processes
     static void findWaitingTime(ProcessModelForPriority proc[], int n, int wt[]) {
         int rt[] = new int[n];
+        List<ProcessModelForPriority> executionOrder = new ArrayList<>();
+        List timeList = new ArrayList<>();
+
 
         // Copy the burst time into rt[]
         for (int i = 0; i < n; i++)
@@ -865,8 +868,7 @@ class PriorityScheduling {
         // completed
         while (complete != n) {
 
-            // Find process with minimum
-            // remaining time among the
+            // Find process with maximum priority among the
             // processes that arrives till the
             // current time`
             for (int j = 0; j < n; j++) {
@@ -884,6 +886,8 @@ class PriorityScheduling {
 
             // Reduce remaining time by one
             rt[highestPriority]--;
+            executionOrder.add(proc[highestPriority]);
+            timeList.add(t);
 
             /*
             // Update the maximum priority
@@ -913,7 +917,14 @@ class PriorityScheduling {
                     wt[highestPriority] = 0;
             }
             // Increment time
+
             t++;
+
+        }
+        System.out.println("The execution order is as follows");
+        for (int i = 0; i < executionOrder.size(); i++) {
+            System.out.println("Process: " + executionOrder.get(i).pid + " @Time " + timeList.get(i));
+
         }
     }
 
